@@ -6,16 +6,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <limits.h>
 #include <errno.h>
 
-// #define INODE_LEN_IND 0
-// #define HARD_LINKS_LEN_IND 1
-// #define OWNER_LEN_IND 2
-// #define GROUP_LEN_IND 3
-// #define BYTE_SIZE_LEN_IND 4
-
 #include "getDirContent.h"
+#include "translateToString.h"
+#include "fileInfo.h"
+#include "dirContent.h"
 
 static int max(int a, int b)
 {
@@ -57,6 +53,8 @@ static void addToDirContent(DirContent* dirContent, FileInfo* fileInfo)
 }
 
 typedef struct dirent dirent;
+
+
 // Returns NULL on error
 DirContent* getDirContent(char* path)
 {
@@ -112,7 +110,15 @@ DirContent* getDirContent(char* path)
             return NULL;
         }
 
-        // TODO: fill in the fileInfo from information we know in statbuf
+
+        // TODO: (later) seperate -i from -l
+        fileInfo->inode = getInodeString(statbuf.st_ino);
+
+        fileInfo->permissions = getPermissionString(statbuf.st_mode);
+        fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
+        fileInfo->owner = getOwnerString(statbuf.st_uid);
+        fileInfo->group = getGroupString(statbuf.st_gid);
+        fileInfo->date = getDateString(statbuf.st_mtim);
 
 
         addToDirContent(dirContent, fileInfo);
