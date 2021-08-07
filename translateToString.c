@@ -33,7 +33,7 @@ char* getByteSizeString(off_t size)
 {
 
 }
-char* getDateString(struct timespec time)
+char* getDateString(struct timespec t)
 {
 
 }
