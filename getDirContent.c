@@ -25,7 +25,7 @@ DirContent* getDirContent(char* path)
     struct stat statbuf;
 
     // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
-    DirContent* dirContent = malloc(sizeof(DirContent*));
+    DirContent* dirContent = malloc(sizeof(DirContent));
     FileInfo* fileInfo;
     dirent* dirEntry;
     fileInfo->next = NULL;
@@ -85,9 +85,8 @@ DirContent* getDirContent(char* path)
             continue;
         }
 
-        fileInfo = malloc(sizeof (FileInfo*));
+        fileInfo = malloc(sizeof (FileInfo));
         fileInfo->name = strdup(fileName);
-        fileInfo->type = dirEntry->d_type;
 
         char buf[strlen(path) + strlen(fileName)+1];
         strcat(buf, path);
