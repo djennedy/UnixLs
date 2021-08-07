@@ -13,6 +13,6 @@ char* getHardLinksString(nlink_t nlink);
 char* getOwnerString(uid_t owner);
 char* getGroupString(gid_t group);
 char* getByteSizeString(off_t size);
-char* getDateString(struct timespec time);
+char* getDateString(struct timespec t);
 
 #endif

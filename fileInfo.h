@@ -6,8 +6,7 @@ typedef struct FileInfo_s FileInfo;
 struct FileInfo_s
 {
     char* inode;
-    unsigned char type;
-    char* permissions; //done?
+    char* permissions;
     char* hardLinks; 
     char* owner;
     char* group;
