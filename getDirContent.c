@@ -12,45 +12,7 @@
 #include "translateToString.h"
 #include "fileInfo.h"
 #include "dirContent.h"
-
-static int max(int a, int b)
-{
-    return a>=b? a : b;
-}
-
-static void addToDirContent(DirContent* dirContent, FileInfo* fileInfo)
-{
-    if (dirContent->size==0)
-    {
-        dirContent->head = fileInfo;
-        dirContent->tail = fileInfo;
-
-        dirContent->size++;
-
-        dirContent->maxLengthOfInfo[INODE_LEN_IND] = strlen(fileInfo->inode);
-        dirContent->maxLengthOfInfo[HARD_LINKS_LEN_IND] = strlen(fileInfo->hardLinks);
-        dirContent->maxLengthOfInfo[OWNER_LEN_IND] = strlen(fileInfo->owner);
-        dirContent->maxLengthOfInfo[GROUP_LEN_IND] = strlen(fileInfo->group);
-        dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND] = strlen(fileInfo->byteSize);
-
-        return;
-    }
-    
-    FileInfo* temp = dirContent->tail;
-    temp->next = fileInfo;
-
-    dirContent->tail = fileInfo;
-
-    dirContent->size++;
-
-    dirContent->maxLengthOfInfo[INODE_LEN_IND] = max(dirContent->maxLengthOfInfo[INODE_LEN_IND], strlen(fileInfo->inode));
-    dirContent->maxLengthOfInfo[HARD_LINKS_LEN_IND] = max(dirContent->maxLengthOfInfo[HARD_LINKS_LEN_IND], strlen(fileInfo->hardLinks));
-    dirContent->maxLengthOfInfo[OWNER_LEN_IND] = max(dirContent->maxLengthOfInfo[OWNER_LEN_IND], strlen(fileInfo->owner));
-    dirContent->maxLengthOfInfo[GROUP_LEN_IND] = max(dirContent->maxLengthOfInfo[GROUP_LEN_IND], strlen(fileInfo->group));
-    dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND] = max(dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND], strlen(fileInfo->byteSize));
-
-    return;
-}
+#include "cleanup.h"
 
 typedef struct dirent dirent;
 
@@ -60,29 +22,58 @@ DirContent* getDirContent(char* path)
 {
     DIR* dirStream = opendir(path);
     char* filePath;
+    struct stat statbuf;
+
+    // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
+    DirContent* dirContent = malloc(sizeof(DirContent*));
+    FileInfo* fileInfo;
+    dirent* dirEntry;
+    fileInfo->next = NULL;
+
     if(dirStream==NULL)
     {
         if(errno==ENOTDIR)
         {
-            // TODO: Check if file
+            // If it's not a directory, check if it's a valid file name for stat
+            filePath = path;
+
+            if(stat(filePath, &statbuf)==0)
+            {
+                printf("UnixLs: Error in stat\n");
+                cleanupDirContent(dirContent);
+                dirContent = NULL;
+                return NULL;
+            }
+            
+            fileInfo->inode = getInodeString(statbuf.st_ino);
+            fileInfo->permissions = getPermissionString(statbuf.st_mode);
+            fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
+            fileInfo->owner = getOwnerString(statbuf.st_uid);
+            fileInfo->group = getGroupString(statbuf.st_gid);
+            fileInfo->date = getDateString(statbuf.st_mtim);
+
+            addToDirContent(dirContent, fileInfo);
+
+            return dirContent;
+
         }
         else if(errno==ENOENT)
         {
             printf("UnixLs: cannot access '%s': No such file or directory\n",path);
+            cleanupDirContent(dirContent);
+            dirContent = NULL;
             return NULL;
         }
         else
         {
             printf("UnixLs: opendir error\n");
+            cleanupDirContent(dirContent);
+            dirContent = NULL;
             return NULL;
         }
     }
 
-    // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
-    DirContent* dirContent = malloc(sizeof(DirContent*));
-    FileInfo* fileInfo;
-
-    dirent* dirEntry;
+    
     do
     {
         dirEntry = readdir(dirStream);
@@ -103,17 +94,17 @@ DirContent* getDirContent(char* path)
         strcat(buf, fileName);
         filePath = buf;
 
-        struct stat statbuf;
         if(stat(filePath, &statbuf)==0)
         {
             printf("UnixLs: Error in stat\n");
+            cleanupDirContent(dirContent);
+            dirContent = NULL;
             return NULL;
         }
 
 
         // TODO: (later) seperate -i from -l
         fileInfo->inode = getInodeString(statbuf.st_ino);
-
         fileInfo->permissions = getPermissionString(statbuf.st_mode);
         fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
         fileInfo->owner = getOwnerString(statbuf.st_uid);
