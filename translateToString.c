@@ -43,9 +43,6 @@ char* getHardLinksString(nlink_t nlink)
 char* getOwnerString(uid_t owner)
 {
     /*
-    //use functions from <pwd.h>  and <grp.h>  // st_uid
-    // use filedemo if needed
-
     //owner = numrical user ID
     char* ownerName = (char*)owner; 
     return strdup(ownerName);
@@ -59,9 +56,6 @@ char* getOwnerString(uid_t owner)
 char* getGroupString(gid_t group)
 {
     /*
-    //use functions from <pwd.h>  and <grp.h> // st_gid
-    // use filedemo
-    
     char* group = (char*)group; 
     return strdup(group);
     */
