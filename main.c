@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <limits.h>
 
 #define NUM_OF_OPTIONS 3
 #define _i_FLAG 0
@@ -17,6 +16,7 @@ int main(int argc, char const *argv[])
 {
     bool flags[NUM_OF_OPTIONS];
     
+    // Where argv[pathIndex] contains the first reference to the path
     int pathIndex = 1;
     
     // Check for options
@@ -66,7 +66,6 @@ int main(int argc, char const *argv[])
     // Checks if no path is given
     if(numPaths==0)
     {
-        //Note: We're trying to avoid using PATH_MAX using this method
         paths[0] = ".";
     }
     // If a path is given
@@ -81,6 +80,8 @@ int main(int argc, char const *argv[])
     }
 
     // TODO: do the ls stuff here
+    //  1. Get info
+    //  2. Print
     
     return 0;
 }
