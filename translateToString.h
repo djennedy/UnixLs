@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <time.h>
 
+// Note: The allocated strings are all malloc-ed in some way,  so remember to call shutdown before 
+
 char* getInodeString(ino_t inode);
 char* getPermissionString(mode_t mode);
 char* getHardLinksString(nlink_t nlink);
