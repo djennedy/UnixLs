@@ -7,7 +7,7 @@ struct FileInfo_s
 {
     char* inode;
     unsigned char type;
-    char* permissions;
+    char* permissions; //done?
     char* hardLinks; 
     char* owner;
     char* group;
