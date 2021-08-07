@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "translateToString.h"
 
@@ -31,7 +32,10 @@ char* getGroupString(gid_t group)
 }
 char* getByteSizeString(off_t size)
 {
+    intmax_t newSize = (intmax_t) size;
+    char* stringSize = sprintf("%jd", newSize);
 
+    return strdup(stringSize);
 }
 char* getDateString(struct timespec t)
 {
