@@ -7,10 +7,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define NUM_OF_OPTIONS 3
-#define _i_FLAG 0
-#define _l_FLAG 1
-#define _R_FLAG 2
+#include "optionFlags.h"
+#include "dirContent.h"
+#include "fileInfo.h"
+#include "printDirContent.h"
 
 int main(int argc, char const *argv[])
 {
@@ -82,9 +82,8 @@ int main(int argc, char const *argv[])
     // TODO: do the ls stuff here
     //  1. Get info
     //  2. Print
+
+    // TODO: Finish this clause, add -R option in main
     
     return 0;
 }
-
-
-// TODO: Look into printing module
