@@ -1,7 +1,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -22,9 +21,11 @@ char* getInodeString(ino_t inode)
     //inode is unsigned char --> ju
 
    uintmax_t sizeInode = (uintmax_t)inode;
-   char* inodeConvert; 
-   if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
 
+   // Note: uintmax_t has a maximum of 20 digits, but we're allocating more just to be safe
+   char inodeConvert[64]; 
+   if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
+       inodeConvert[0] = '\0';
    }
     return strdup(inodeConvert);
    
@@ -34,7 +35,7 @@ char* getPermissionString(mode_t mode)
 {
     // commented out for testing purposes
 
-    char* convertedString;
+    char convertedString[11];
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
 
@@ -49,11 +50,13 @@ char* getPermissionString(mode_t mode)
 char* getHardLinksString(nlink_t nlink)
 {
     //nlink similar to size bc is a number too
-    intmax_t newLink = (intmax_t) nlink; // casting it to "long" in everyones compuer
-    char* stringLink;
+    uintmax_t newLink = (uintmax_t) nlink;
+
+    // Note: uintmax_t has a maximum of 20 digits, but we're allocating more just to be safe
+    char stringLink[64];
     if(sprintf(stringLink, "%jd", newLink)<0)
     {
-        stringLink = "";
+        stringLink[0] = '\0';
     }
 
     return strdup(stringLink); //duplicates string to count # of bytes
@@ -99,10 +102,12 @@ char* getByteSizeString(off_t size)
 {
     intmax_t newSize = (intmax_t) size; // casting it to "long"
                 // but intmax_t so its "long" in everyones compuer
-    char* byteSizeString;
+
+    // Note: intmax_t has a maximum of 20 digits, but we're allocating more just to be safe
+    char byteSizeString[64];
     if(sprintf(byteSizeString,"%jd", newSize)<0)
     {
-        byteSizeString = "";
+        byteSizeString[0] = '\0';
     }
 
     return strdup(byteSizeString); //duplicates string to count # of bytes, non-local
