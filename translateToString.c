@@ -8,13 +8,12 @@
 #include <string.h>
 #include <stdint.h>
 #include <pwd.h>
-// #include <bsd/string.h>
+#include <bsd/string.h>
 #include <grp.h>
 #include <time.h> 
 
 #include "translateToString.h"
 #include "fileInfo.h"
-// #include "infodemo.c"
 
 
 
@@ -34,7 +33,7 @@ char* getInodeString(ino_t inode)
 char* getPermissionString(mode_t mode) 
 {
     // commented out for testing purposes
-    /* 
+
     char* convertedString;
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
@@ -42,10 +41,9 @@ char* getPermissionString(mode_t mode)
     //should do an error check? <---- NOWWWWWWW <---------- <--
     
     return strdup(convertedString);
-    */
 
-   char* dum;
-   return dum; // so it compiles 
+//    char* dum;
+//    return dum; // so it compiles 
 }
 
 char* getHardLinksString(nlink_t nlink)
@@ -112,25 +110,12 @@ char* getByteSizeString(off_t size)
 
 char* getDateString(struct timespec t)
 {
+    struct tm* curTime = localtime(&t.tv_sec);
 
-    //approach to usee
-
-    // time_t     now;
-    struct tm  ts;
-    char       buf[80];
-
-    // Get current time
-    time(&t);
-
-    ts = *localtime(&t);
-    strftime(buf, sizeof(buf), "%b-%d %Y %H:%M", &ts); // formatst the time 
-                // as we specified and places in array (buf) of max size (80)
-                //b=month abrivated, d=day 0 -31, Y=year as decimal, H=hour 00-23,
-                // M=minute 00-59,  
+    // We only need size 18 here (17 char + 1 null terminator), but we use 20 to be safe
+    char stringDate[20];
+    strftime(stringDate, 20, "%b %m %Y %H:%M",curTime);
 
 
-    printf("%s\n", buf); // for testing purposes 
-    
-    return strdup(buf);
-
+    return strdup(stringDate);
 }
