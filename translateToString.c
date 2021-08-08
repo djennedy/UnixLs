@@ -33,7 +33,8 @@ char* getInodeString(ino_t inode)
 
 char* getPermissionString(mode_t mode) 
 {
-    /*
+    // commented out for testing purposes
+    /* 
     char* convertedString;
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
@@ -42,8 +43,9 @@ char* getPermissionString(mode_t mode)
     
     return strdup(convertedString);
     */
+
    char* dum;
-   return dum;
+   return dum; // so it compiles 
 }
 
 char* getHardLinksString(nlink_t nlink)
@@ -111,7 +113,7 @@ char* getByteSizeString(off_t size)
 char* getDateString(struct timespec t)
 {
 
-    //approach to usee ;
+    //approach to usee
 
     // time_t     now;
     struct tm  ts;
@@ -121,10 +123,12 @@ char* getDateString(struct timespec t)
     time(&t);
 
     ts = *localtime(&t);
-    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M:%S", &ts); // formatst the time 
+    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M", &ts); // formatst the time 
                 // as we specified and places in array (buf) of max size (80)
                 //m=month 0-12, d=day 0 -31, Y=year as decimal, H=hour 00-23,
-                // M=minute 00-59, S=second 00-60,   
+                // M=minute 00-59,  
+
+    // convert month from 0 - 12 into date, could brute force it using if statements
 
     printf("%s\n", buf); // for testing purposes 
     
