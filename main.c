@@ -11,8 +11,10 @@
 #include "dirContent.h"
 #include "fileInfo.h"
 #include "printDirContent.h"
+#include "getDirContent.h"
+#include "cleanup.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
     bool flags[NUM_OF_OPTIONS];
     
@@ -66,7 +68,8 @@ int main(int argc, char const *argv[])
     // Checks if no path is given
     if(numPaths==0)
     {
-        paths[0] = ".";
+        numPaths = 1;
+        paths[0] = "./";
     }
     // If a path is given
     else 
@@ -75,6 +78,11 @@ int main(int argc, char const *argv[])
 
         for(int i=pathIndex;i<argc;i++)
         {
+            if(argv[i][strlen(argv[i]-2)]!='/')
+            {
+                strcat(argv[i], "/");
+            }
+
             paths[i-pathIndex] = argv[i];
         }
     }
@@ -85,7 +93,26 @@ int main(int argc, char const *argv[])
 
     // TODO: Finish this clause, add -R option in main
 
-    getDateString(); // for testing purposes 
+    for (int i=0;i<numPaths;i++)
+    {
+        DirContent* dirContent = getDirContent(paths[i]);
+
+        // If more than 1 paths, print the path before listing
+        if (numPaths>1)
+        {
+            printf("%s: \n", paths[i]);
+        }
+
+        if(dirContent!=NULL)
+        {
+            printDirContent(dirContent, flags);       
+        }
+        else
+        {
+            printf("Error occured\n");
+        }
+    }
+    
     
     return 0;
 }
