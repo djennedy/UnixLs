@@ -26,9 +26,7 @@ DirContent* getDirContent(char* path)
 
     // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
     DirContent* dirContent = malloc(sizeof(DirContent));
-    FileInfo* fileInfo = malloc (sizeof(fileInfo));
     dirent* dirEntry;
-    fileInfo->next = NULL;
 
     if(dirStream==NULL)
     {
@@ -44,7 +42,8 @@ DirContent* getDirContent(char* path)
                 dirContent = NULL;
                 return NULL;
             }
-            
+            FileInfo* fileInfo = malloc(sizeof(FileInfo));
+
             fileInfo->inode = getInodeString(statbuf.st_ino);
             fileInfo->permissions = getPermissionString(statbuf.st_mode);
             fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
@@ -83,6 +82,7 @@ DirContent* getDirContent(char* path)
             break;
         }
         char* fileName = dirEntry->d_name;
+        FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
         // Skip hidden files
         if(fileName[0]=='.')
