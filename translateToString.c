@@ -111,21 +111,16 @@ char* getByteSizeString(off_t size)
 char* getDateString(struct timespec t)
 {
 
-    //approach to usee 
+    //approach to usee ;
 
-    // gets the seconds from Jan 1 1970
-    time_t seconds;
-    seconds = time(NULL);
-    // printf("time converted is: %ld\n", seconds);
-
-    time_t     now;
+    // time_t     now;
     struct tm  ts;
     char       buf[80];
 
     // Get current time
-    time(&now);
+    time(&t);
 
-    ts = *localtime(&now);
+    ts = *localtime(&t);
     strftime(buf, sizeof(buf), "%m-%d %Y %H:%M:%S", &ts); // formatst the time 
                 // as we specified and places in array (buf) of max size (80)
                 //m=month 0-12, d=day 0 -31, Y=year as decimal, H=hour 00-23,
