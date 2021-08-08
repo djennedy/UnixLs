@@ -10,23 +10,34 @@
 #include <pwd.h>
 #include <bsd/string.h>
 #include <grp.h>
+#include <time.h> 
 
 #include "translateToString.h"
 #include "fileInfo.h"
-#include "infodemo.c"
+// #include "infodemo.c"
 
 
 
 char* getInodeString(ino_t inode)
 {
+    //inode is unsigned char --> ju
+
+   uintmax_t sizeInode = (uintmax_t)inode;
+   char* inodeConvert; 
+   if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
+
+   }
+    return strdup(inodeConvert);
    
 }
 
-char* getPermissionString(mode_t mode)  // need to makee better
+char* getPermissionString(mode_t mode) 
 {
     char* convertedString;
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
+
+    //should do an error check? <---- NOWWWWWWW <---------- <--
     
     return strdup(convertedString);
 }
@@ -95,5 +106,22 @@ char* getByteSizeString(off_t size)
 
 char* getDateString(struct timespec t)
 {
-   
+    /*
+    struct tm // has variables such as 
+    tzname
+    tm_zone
+    readlink()
+    */
+
+    //approach to usee 
+
+    // gets the seconds from Jan 1 1970
+    time_t seconds;
+    seconds = time(NULL);
+    
+    // to convert seconds to mmm dd yyyy hh:mm
+    time_t c;
+    c = strtoul( "1360440555", NULL, 0 );
+    ctime( &c );
+
 }
