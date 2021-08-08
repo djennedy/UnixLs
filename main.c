@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
         if(dirContent!=NULL)
         {
             printDirContent(dirContent, flags);       
+            cleanupDirContent(dirContent);
         }
         else
         {
             printf("Error occured\n");
         }
     }
-    
     
     return 0;
 }
