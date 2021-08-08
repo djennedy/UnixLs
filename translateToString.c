@@ -123,12 +123,11 @@ char* getDateString(struct timespec t)
     time(&t);
 
     ts = *localtime(&t);
-    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M", &ts); // formatst the time 
+    strftime(buf, sizeof(buf), "%b-%d %Y %H:%M", &ts); // formatst the time 
                 // as we specified and places in array (buf) of max size (80)
-                //m=month 0-12, d=day 0 -31, Y=year as decimal, H=hour 00-23,
+                //b=month abrivated, d=day 0 -31, Y=year as decimal, H=hour 00-23,
                 // M=minute 00-59,  
 
-    // convert month from 0 - 12 into date, could brute force it using if statements
 
     printf("%s\n", buf); // for testing purposes 
     
