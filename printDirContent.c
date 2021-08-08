@@ -66,7 +66,7 @@ void printDirContent(DirContent* dirContent, bool flags[])
             memset(whiteSpaceByteSize, ' ', offsetByteSize);
             whiteSpaceByteSize[offsetByteSize] = '\0';
 
-            printf("%c%s %s%s %s%s %s%s %s%s %s %s\n",
+            printf("%s %s%s %s%s %s%s %s%s %s %s\n",
                 trav->permissions,
                 whiteSpaceHardLinks, trav->hardLinks,
                 trav->owner, whiteSpaceOwner,
@@ -108,7 +108,7 @@ void printDirContent(DirContent* dirContent, bool flags[])
             memset(whiteSpaceByteSize, ' ', offsetByteSize);
             whiteSpaceByteSize[offsetByteSize] = '\0';
 
-            printf("%s%s %c%s %s%s %s%s %s%s %s%s %s %s\n",
+            printf("%s%s %s %s%s %s%s %s%s %s%s %s %s\n",
                 whiteSpaceInode, trav->inode, 
                 trav->permissions,
                 whiteSpaceHardLinks, trav->hardLinks,
