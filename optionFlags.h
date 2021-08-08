@@ -1,5 +1,5 @@
 #ifndef _OPTION_FLAGS_H
-#define _OPTION_FlAGS_H
+#define _OPTION_FLAGS_H
 
 #define NUM_OF_OPTIONS 3
 #define _i_FLAG 0
