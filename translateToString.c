@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <pwd.h>
-#include <bsd/string.h>
+// #include <bsd/string.h>
 #include <grp.h>
 #include <time.h> 
 
@@ -33,6 +33,7 @@ char* getInodeString(ino_t inode)
 
 char* getPermissionString(mode_t mode) 
 {
+    /*
     char* convertedString;
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
@@ -40,6 +41,9 @@ char* getPermissionString(mode_t mode)
     //should do an error check? <---- NOWWWWWWW <---------- <--
     
     return strdup(convertedString);
+    */
+   char* dum;
+   return dum;
 }
 
 char* getHardLinksString(nlink_t nlink)
@@ -120,8 +124,27 @@ char* getDateString(struct timespec t)
     seconds = time(NULL);
     
     // to convert seconds to mmm dd yyyy hh:mm
-    time_t c;
-    c = strtoul( "1360440555", NULL, 0 );
-    ctime( &c );
+    // time_t c;
+    // c = strtoul( "1360440555", NULL, 0 );
+    // seconds = ctime( &c );
 
+
+
+    printf("time converted is: %ld\n", seconds);
+
+    time_t     now;
+    struct tm  ts;
+    char       buf[80];
+
+    // Get current time
+    time(&now);
+
+    ts = *localtime(&now);
+    // strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M:%S %Z", &ts);
+    printf("%s\n", buf);
+    // return 0;
+
+    char* dumb;
+    return dumb;
 }
