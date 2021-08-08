@@ -20,13 +20,13 @@ char* getInodeString(ino_t inode)
 {
     //inode is unsigned char --> ju
 
-   uintmax_t sizeInode = (uintmax_t)inode;
+    uintmax_t sizeInode = (uintmax_t)inode;
 
-   // Note: uintmax_t has a maximum of 20 digits, but we're allocating more just to be safe
-   char inodeConvert[64]; 
-   if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
-       inodeConvert[0] = '\0';
-   }
+    // Note: uintmax_t has a maximum of 20 digits, but we're allocating more just to be safe
+    char inodeConvert[64]; 
+    if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
+        inodeConvert[0] = '\0';
+    }
     return strdup(inodeConvert);
    
 }
