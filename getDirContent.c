@@ -26,7 +26,7 @@ DirContent* getDirContent(char* path)
 
     // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
     DirContent* dirContent = malloc(sizeof(DirContent));
-    FileInfo* fileInfo;
+    FileInfo* fileInfo = malloc (sizeof(fileInfo));
     dirent* dirEntry;
     fileInfo->next = NULL;
 
@@ -51,6 +51,7 @@ DirContent* getDirContent(char* path)
             fileInfo->owner = getOwnerString(statbuf.st_uid);
             fileInfo->group = getGroupString(statbuf.st_gid);
             fileInfo->date = getDateString(statbuf.st_mtim);
+            fileInfo->byteSize = getByteSizeString(statbuf.st_size);
 
             addToDirContent(dirContent, fileInfo);
 
@@ -74,9 +75,13 @@ DirContent* getDirContent(char* path)
     }
 
     
-    do
+    while(true)
     {
         dirEntry = readdir(dirStream);
+        if(dirEntry == NULL)
+        {
+            break;
+        }
         char* fileName = dirEntry->d_name;
 
         // Skip hidden files
@@ -85,15 +90,16 @@ DirContent* getDirContent(char* path)
             continue;
         }
 
-        fileInfo = malloc(sizeof (FileInfo));
         fileInfo->name = strdup(fileName);
 
+        // TODO: error here
         char buf[strlen(path) + strlen(fileName)+1];
+        memset(buf, 0,strlen(path) + strlen(fileName)+1);
         strcat(buf, path);
         strcat(buf, fileName);
         filePath = buf;
 
-        if(stat(filePath, &statbuf)==0)
+        if(stat(filePath, &statbuf)!=0)
         {
             printf("UnixLs: Error in stat\n");
             cleanupDirContent(dirContent);
@@ -109,11 +115,11 @@ DirContent* getDirContent(char* path)
         fileInfo->owner = getOwnerString(statbuf.st_uid);
         fileInfo->group = getGroupString(statbuf.st_gid);
         fileInfo->date = getDateString(statbuf.st_mtim);
+        fileInfo->byteSize = getByteSizeString(statbuf.st_size);
 
 
         addToDirContent(dirContent, fileInfo);
-        
-    } while (dirEntry!=NULL);
+    }
 
     closedir(dirStream);
     return dirContent;
