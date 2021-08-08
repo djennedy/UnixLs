@@ -49,7 +49,7 @@ DirContent* getDirContent(char* path)
             fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
             fileInfo->owner = getOwnerString(statbuf.st_uid);
             fileInfo->group = getGroupString(statbuf.st_gid);
-            fileInfo->date = getDateString(statbuf.st_mtim);
+            fileInfo->date = getDateString(statbuf.st_mtim); 
             fileInfo->byteSize = getByteSizeString(statbuf.st_size);
 
             addToDirContent(dirContent, fileInfo);
