@@ -85,7 +85,7 @@ int main(int argc, char const *argv[])
 
     // TODO: Finish this clause, add -R option in main
 
-    getDateString();
+    getDateString(); // for testing purposes 
     
     return 0;
 }

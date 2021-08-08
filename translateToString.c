@@ -110,27 +110,13 @@ char* getByteSizeString(off_t size)
 
 char* getDateString(struct timespec t)
 {
-    /*
-    struct tm // has variables such as 
-    tzname
-    tm_zone
-    readlink()
-    */
 
     //approach to usee 
 
     // gets the seconds from Jan 1 1970
     time_t seconds;
     seconds = time(NULL);
-    
-    // to convert seconds to mmm dd yyyy hh:mm
-    // time_t c;
-    // c = strtoul( "1360440555", NULL, 0 );
-    // seconds = ctime( &c );
-
-
-
-    printf("time converted is: %ld\n", seconds);
+    // printf("time converted is: %ld\n", seconds);
 
     time_t     now;
     struct tm  ts;
@@ -140,11 +126,13 @@ char* getDateString(struct timespec t)
     time(&now);
 
     ts = *localtime(&now);
-    // strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
-    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M:%S %Z", &ts);
-    printf("%s\n", buf);
-    // return 0;
+    strftime(buf, sizeof(buf), "%m-%d %Y %H:%M:%S", &ts); // formatst the time 
+                // as we specified and places in array (buf) of max size (80)
+                //m=month 0-12, d=day 0 -31, Y=year as decimal, H=hour 00-23,
+                // M=minute 00-59, S=second 00-60,   
 
-    char* dumb;
-    return dumb;
+    printf("%s\n", buf); // for testing purposes 
+    
+    return strdup(buf);
+
 }
