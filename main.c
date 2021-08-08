@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
         for(int i=pathIndex;i<argc;i++)
         {
-            if(argv[i][strlen(argv[i]-2)]!='/')
+            if(argv[i][strlen(argv[i]-2)]!='/') // Error here with more than 1 arguments
             {
                 strcat(argv[i], "/");
             }
