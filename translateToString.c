@@ -14,7 +14,11 @@
 #include "translateToString.h"
 #include "fileInfo.h"
 
+// Buf is always of size 11
+static char* customStrMode(mode_t mode,char* buf)
+{
 
+}
 
 char* getInodeString(ino_t inode)
 {
