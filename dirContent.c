@@ -31,6 +31,8 @@ void addToDirContent(DirContent* dirContent, FileInfo* fileInfo)
         dirContent->maxLengthOfInfo[GROUP_LEN_IND] = strlen(fileInfo->group);
         dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND] = strlen(fileInfo->byteSize);
 
+        fileInfo->next = NULL;
+
         return;
     }
     
@@ -46,6 +48,8 @@ void addToDirContent(DirContent* dirContent, FileInfo* fileInfo)
     dirContent->maxLengthOfInfo[OWNER_LEN_IND] = max(dirContent->maxLengthOfInfo[OWNER_LEN_IND], strlen(fileInfo->owner));
     dirContent->maxLengthOfInfo[GROUP_LEN_IND] = max(dirContent->maxLengthOfInfo[GROUP_LEN_IND], strlen(fileInfo->group));
     dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND] = max(dirContent->maxLengthOfInfo[BYTE_SIZE_LEN_IND], strlen(fileInfo->byteSize));
+
+    fileInfo->next=NULL;
 
     return;
 }

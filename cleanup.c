@@ -36,6 +36,8 @@ void cleanupFileInfo (FileInfo* fileInfo)
         return;
     }
     
+    //Note: free(NULL) does nothing and is not undefined, so it's safe to free all of these, including symlink, since we're setting it as null as default
+
     free(fileInfo->inode);
     fileInfo->inode = NULL;
     free(fileInfo->permissions);
@@ -52,6 +54,8 @@ void cleanupFileInfo (FileInfo* fileInfo)
     fileInfo->date = NULL;
     free(fileInfo->name);
     fileInfo->name = NULL;
+    free(fileInfo->symLinkName);
+    fileInfo->symLinkName = NULL;
 
     free(fileInfo);
 }

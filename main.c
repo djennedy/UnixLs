@@ -17,6 +17,11 @@
 int main(int argc, char *argv[])
 {
     bool flags[NUM_OF_OPTIONS];
+
+    for(int i=0;i<NUM_OF_OPTIONS;i++)
+    {
+        flags[i]=false;
+    }
     
     // Where argv[pathIndex] contains the first reference to the path
     int pathIndex = 1;
@@ -78,18 +83,9 @@ int main(int argc, char *argv[])
 
         for(int i=pathIndex;i<argc;i++)
         {
-            if(argv[i][strlen(argv[i]-2)]!='/') // Error here with more than 1 arguments
-            {
-                strcat(argv[i], "/");
-            }
-
             paths[i-pathIndex] = argv[i];
         }
     }
-
-    // TODO: do the ls stuff here
-    //  1. Get info
-    //  2. Print
 
     // TODO: Finish this clause, add -R option in main
 
@@ -100,6 +96,10 @@ int main(int argc, char *argv[])
         // If more than 1 paths, print the path before listing
         if (numPaths>1)
         {
+            if(i!=0)
+            {
+                printf("\n");
+            }
             printf("%s: \n", paths[i]);
         }
 
