@@ -19,11 +19,26 @@ typedef struct dirent dirent;
 // Returns NULL on error
 DirContent* getDirContent(char* path)
 {
-    DIR* dirStream = opendir(path);
+    // To take care of cases where an argument is passed without the directory path
+    // Defaults to current directory
+    char dirPath[strlen(path)+3];
+    memset(dirPath, 0, strlen(path)+2);
+    if(strstr(path,"/")==NULL)
+    {
+        dirPath[0]='.';
+        dirPath[1]='/';
+        dirPath[2]='\0';
+        strcat(dirPath,path);
+    }
+    else
+    {
+        strcpy(dirPath, path);
+    }
+
+    DIR* dirStream = opendir(dirPath);
     char* filePath;
     struct stat statbuf;
-
-    // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
+    
     DirContent* dirContent = malloc(sizeof(DirContent));
     dirContent->head=NULL;
     dirContent->tail=NULL;
@@ -46,6 +61,7 @@ DirContent* getDirContent(char* path)
             }
             FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
+            fileInfo->name = strdup(path);
             fileInfo->inode = getInodeString(statbuf.st_ino);
             fileInfo->permissions = getPermissionString(statbuf.st_mode);
             fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
@@ -94,10 +110,15 @@ DirContent* getDirContent(char* path)
         FileInfo* fileInfo = malloc(sizeof(FileInfo));
         fileInfo->name = strdup(fileName);
 
-        // TODO: error here
-        char buf[strlen(path) + strlen(fileName)+1];
-        memset(buf, 0,strlen(path) + strlen(fileName)+1);
+        // The first +1 is for \0, the second is so we can fit in a / in the end of the path before the file name if the path doesn't contain it
+        // eg, if I give the argument . , we want ./filename not .filename
+        char buf[strlen(path) + strlen(fileName)+1+1];
+        memset(buf, 0,strlen(path) + strlen(fileName)+2);
         strcat(buf, path);
+        if(buf[strlen(path)-1]!='/')
+        {
+            strcat(buf,"/");
+        }
         strcat(buf, fileName);
         filePath = buf;
 
