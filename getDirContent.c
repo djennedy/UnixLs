@@ -35,7 +35,7 @@ DirContent* getDirContent(char* path)
             // If it's not a directory, check if it's a valid file name for stat
             filePath = path;
 
-            if(stat(filePath, &statbuf)==0)
+            if(stat(filePath, &statbuf)!=0)
             {
                 printf("UnixLs: Error in stat\n");
                 cleanupDirContent(dirContent);
@@ -81,7 +81,7 @@ DirContent* getDirContent(char* path)
         {
             break;
         }
-        char* fileName = dirEntry->d_name;
+        char* fileName = dirEntry->d_name; //Error: Name doesn't show up for the first entry
         FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
         // Skip hidden files
