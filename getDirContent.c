@@ -16,7 +16,6 @@
 
 typedef struct dirent dirent;
 
-
 // Returns NULL on error
 DirContent* getDirContent(char* path)
 {
@@ -26,6 +25,9 @@ DirContent* getDirContent(char* path)
 
     // TODO: free this and all other malloc/strdup uses, change all return null to shutdown first
     DirContent* dirContent = malloc(sizeof(DirContent));
+    dirContent->head=NULL;
+    dirContent->tail=NULL;
+    dirContent->size=0;
     dirent* dirEntry;
 
     if(dirStream==NULL)
@@ -82,7 +84,6 @@ DirContent* getDirContent(char* path)
             break;
         }
         char* fileName = dirEntry->d_name; //Error: Name doesn't show up for the first entry
-        FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
         // Skip hidden files
         if(fileName[0]=='.')
@@ -90,6 +91,7 @@ DirContent* getDirContent(char* path)
             continue;
         }
 
+        FileInfo* fileInfo = malloc(sizeof(FileInfo));
         fileInfo->name = strdup(fileName);
 
         // TODO: error here

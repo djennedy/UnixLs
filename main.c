@@ -17,6 +17,11 @@
 int main(int argc, char *argv[])
 {
     bool flags[NUM_OF_OPTIONS];
+
+    for(int i=0;i<NUM_OF_OPTIONS;i++)
+    {
+        flags[i]=false;
+    }
     
     // Where argv[pathIndex] contains the first reference to the path
     int pathIndex = 1;
