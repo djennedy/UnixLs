@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <pwd.h>
-#include <bsd/string.h>
+// #include <bsd/string.h>
 #include <grp.h>
 #include <time.h> 
 
@@ -17,7 +17,36 @@
 // Buf is always of size 11
 static char* customStrMode(mode_t mode,char* buf)
 {
+// use the printf from stack overflow
+// concatinate printf to a buf instead
+// put mode into bug?
 
+ 
+    char buf[15]; //always 11 but to be safe we use 15
+    strdup(buf, (S_ISDIR(fileStat.st_mode)) ? "d" : "-" ) ); 
+    strcat(buf, (fileStat.st_mode & S_IRUSR) ? "r" : "-"  ); 
+    // strcat(buf, (fileStat.st_mode & S_IWUSR) ? "w" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IXUSR) ? "x" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IRGRP) ? "r" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IWGRP) ? "w" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IXGRP) ? "x" : "-"  ); 
+    // strcat(buf, (fileStat.st_mode & S_IROTH) ? "r" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IWOTH) ? "w" : "-"  );
+    // strcat(buf, (fileStat.st_mode & S_IXOTH) ? "x" : "-"  );
+
+
+    // printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+    // printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-"  );
+    // printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-"  );
+    // printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-"  );
+    // printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-"  );
+    // printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-"  );
+    // printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-"  );
+    // printf( (fileStat.st_mode & S_IROTH) ? "r" : "-"  );
+    // printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-"  );
+    // printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-"  );
+
+    return buf;
 }
 
 char* getInodeString(ino_t inode)
@@ -42,13 +71,9 @@ char* getPermissionString(mode_t mode)
     char convertedString[11];
     strmode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
-
-    //should do an error check? <---- NOWWWWWWW <---------- <--
     
     return strdup(convertedString);
 
-//    char* dum;
-//    return dum; // so it compiles 
 }
 
 char* getHardLinksString(nlink_t nlink)
