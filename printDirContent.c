@@ -66,7 +66,7 @@ void printDirContent(DirContent* dirContent, bool flags[])
             memset(whiteSpaceByteSize, ' ', offsetByteSize);
             whiteSpaceByteSize[offsetByteSize] = '\0';
 
-            printf("%s %s%s %s%s %s%s %s%s %s %s\n",
+            printf("%s %s%s %s%s %s%s %s%s %s %s",
                 trav->permissions,
                 whiteSpaceHardLinks, trav->hardLinks,
                 trav->owner, whiteSpaceOwner,
@@ -74,6 +74,15 @@ void printDirContent(DirContent* dirContent, bool flags[])
                 whiteSpaceByteSize, trav->byteSize,
                 trav->date,
                 trav->name);
+
+            if(trav->symLinkName!=NULL)
+            {
+                printf("->%s\n",trav->symLinkName);
+            }
+            else
+            {
+                printf("\n");
+            }
 
             trav = trav->next;
         }
@@ -108,7 +117,7 @@ void printDirContent(DirContent* dirContent, bool flags[])
             memset(whiteSpaceByteSize, ' ', offsetByteSize);
             whiteSpaceByteSize[offsetByteSize] = '\0';
 
-            printf("%s%s %s %s%s %s%s %s%s %s%s %s %s\n",
+            printf("%s%s %s %s%s %s%s %s%s %s%s %s %s",
                 whiteSpaceInode, trav->inode, 
                 trav->permissions,
                 whiteSpaceHardLinks, trav->hardLinks,
@@ -117,6 +126,15 @@ void printDirContent(DirContent* dirContent, bool flags[])
                 whiteSpaceByteSize, trav->byteSize,
                 trav->date,
                 trav->name);
+
+            if(trav->symLinkName!=NULL)
+            {
+                printf(" -> %s\n",trav->symLinkName);
+            }
+            else
+            {
+                printf("\n");
+            }
 
             trav = trav->next;
         }

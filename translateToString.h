@@ -14,5 +14,7 @@ char* getOwnerString(uid_t owner);
 char* getGroupString(gid_t group);
 char* getByteSizeString(off_t size);
 char* getDateString(struct timespec t);
+char* getNameString (char* name);
+char* getSymLinkString(char* symLink);
 
 #endif

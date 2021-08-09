@@ -124,3 +124,14 @@ char* getDateString(struct timespec t)
 
     return strdup(stringDate);
 }
+
+char* getNameString (char* name)
+{
+    return strdup(name);
+}
+
+char* getSymLinkString(char* symLink)
+{
+    return strdup(symLink);
+}
+

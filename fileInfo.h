@@ -13,6 +13,7 @@ struct FileInfo_s
     char* byteSize;
     char* date;
     char* name;
+    char* symLinkName;
 
     // Next fileInfo in the dirContent linked list
     FileInfo* next;

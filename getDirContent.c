@@ -38,7 +38,7 @@ DirContent* getDirContent(char* path)
     DIR* dirStream = opendir(dirPath);
     char* filePath;
     struct stat statbuf;
-    
+
     DirContent* dirContent = malloc(sizeof(DirContent));
     dirContent->head=NULL;
     dirContent->tail=NULL;
@@ -52,7 +52,7 @@ DirContent* getDirContent(char* path)
             // If it's not a directory, check if it's a valid file name for stat
             filePath = path;
 
-            if(stat(filePath, &statbuf)!=0)
+            if(lstat(filePath, &statbuf)!=0)
             {
                 printf("UnixLs: Error in stat\n");
                 cleanupDirContent(dirContent);
@@ -61,7 +61,7 @@ DirContent* getDirContent(char* path)
             }
             FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
-            fileInfo->name = strdup(path);
+            fileInfo->name = getNameString(path);
             fileInfo->inode = getInodeString(statbuf.st_ino);
             fileInfo->permissions = getPermissionString(statbuf.st_mode);
             fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
@@ -69,6 +69,27 @@ DirContent* getDirContent(char* path)
             fileInfo->group = getGroupString(statbuf.st_gid);
             fileInfo->date = getDateString(statbuf.st_mtim);
             fileInfo->byteSize = getByteSizeString(statbuf.st_size);
+
+            // Check for symlinks
+            if(S_ISLNK(statbuf.st_mode))
+            {
+                char symLinkbuf[257];
+                int symLinkLen = readlink(filePath,symLinkbuf, 256);
+                if(symLinkLen==-1)
+                {
+                    printf("UnixLs: Error with symlinks\n");
+                    fileInfo->symLinkName = NULL;
+                }
+                else
+                {
+                    symLinkbuf[symLinkLen]='\0';
+                    fileInfo->symLinkName  = getSymLinkString(symLinkbuf);
+                }
+            }
+            else
+            {
+                fileInfo->symLinkName = NULL;
+            }
 
             addToDirContent(dirContent, fileInfo);
 
@@ -99,7 +120,7 @@ DirContent* getDirContent(char* path)
         {
             break;
         }
-        char* fileName = dirEntry->d_name; //Error: Name doesn't show up for the first entry
+        char* fileName = dirEntry->d_name;
 
         // Skip hidden files
         if(fileName[0]=='.')
@@ -108,8 +129,8 @@ DirContent* getDirContent(char* path)
         }
 
         FileInfo* fileInfo = malloc(sizeof(FileInfo));
-        fileInfo->name = strdup(fileName);
 
+        // Adding a / to the end of the file, since it's a directory
         // The first +1 is for \0, the second is so we can fit in a / in the end of the path before the file name if the path doesn't contain it
         // eg, if I give the argument . , we want ./filename not .filename
         char buf[strlen(path) + strlen(fileName)+1+1];
@@ -122,7 +143,7 @@ DirContent* getDirContent(char* path)
         strcat(buf, fileName);
         filePath = buf;
 
-        if(stat(filePath, &statbuf)!=0)
+        if(lstat(filePath, &statbuf)!=0)
         {
             printf("UnixLs: Error in stat\n");
             cleanupDirContent(dirContent);
@@ -139,6 +160,28 @@ DirContent* getDirContent(char* path)
         fileInfo->group = getGroupString(statbuf.st_gid);
         fileInfo->date = getDateString(statbuf.st_mtim);
         fileInfo->byteSize = getByteSizeString(statbuf.st_size);
+        fileInfo->name = getNameString(fileName);
+
+        // Check for symlinks
+        if(S_ISLNK(statbuf.st_mode))
+        {
+            char symLinkbuf[257];
+            int symLinkLen = readlink(filePath,symLinkbuf, 256);
+            if(symLinkLen==-1)
+            {
+                printf("UnixLs: Error with symlinks\n");
+                fileInfo->symLinkName = NULL;
+            }
+            else
+            {
+                symLinkbuf[symLinkLen]='\0';
+                fileInfo->symLinkName  = getSymLinkString(symLinkbuf);
+            }
+        }
+        else
+        {
+            fileInfo->symLinkName = NULL;
+        }
 
 
         addToDirContent(dirContent, fileInfo);
