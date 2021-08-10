@@ -44,7 +44,7 @@ static char* customStrMode(mode_t mode,char* buf)
     }
 
     // Setting up permissions for owner
-    if(mode & S_IRUSR == 0) //read
+    if((mode & S_IRUSR) == 0) //read
     {
         buf[1] = '-';
     }
@@ -53,7 +53,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[1] = 'r';
     }
     
-    if(mode & S_IWUSR == 0) //write
+    if((mode & S_IWUSR) == 0) //write
     {
         buf[2] = '-';
     }
@@ -62,7 +62,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[2] = 'w';
     }
 
-    if(mode & S_IXUSR == 0) //execute
+    if((mode & S_IXUSR) == 0) //execute
     {
         buf[3] = '-';
     }
@@ -73,7 +73,7 @@ static char* customStrMode(mode_t mode,char* buf)
 
     // Setting up permissions for group
 
-    if(mode & S_IRGRP == 0) //read
+    if((mode & S_IRGRP) == 0) //read
     {
         buf[4] = '-';
     }
@@ -82,7 +82,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[4] = 'r';
     }
 
-    if(mode & S_IWGRP == 0) // write
+    if((mode & S_IWGRP) == 0) // write
     {
         buf[5] = '-';
     }
@@ -91,7 +91,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[5] = 'w';
     }
 
-    if(mode & S_IXGRP == 0) // execute
+    if((mode & S_IXGRP) == 0) // execute
     {
         buf[6] = '-';
     }
@@ -102,7 +102,7 @@ static char* customStrMode(mode_t mode,char* buf)
 
     // Setting up permissions for others
 
-    if(mode & S_IROTH) // read
+    if((mode & S_IROTH) == 0) // read
     {
         buf[7] = '-';
     }
@@ -111,7 +111,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[7] = 'r';
     }
 
-    if(mode & S_IWOTH == 0) // write
+    if((mode & S_IWOTH) == 0) // write
     {
         buf[8] = '-';
     }
@@ -120,7 +120,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[8] = 'w';
     }
 
-    if(mode & S_IXOTH == 0) // execute
+    if((mode & S_IXOTH) == 0) // execute
     {
         buf[9] = '-';
     }

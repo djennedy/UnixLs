@@ -173,7 +173,16 @@ DirContent* getDirContent(char* path,bool flags[])
         FileInfo* fileInfo = malloc(sizeof(FileInfo));
         memset(fileInfo, 0, sizeof(FileInfo));
         fileInfo->name = getNameString(fileName);
-        fileInfo->isDir=true; // must be true since not caught by ENOTDIR error
+
+        if(dirEntry->d_type==DT_DIR)
+        {
+            fileInfo->isDir=true;
+        }
+        else
+        {
+            fileInfo->isDir=false;
+        }
+        
 
         if(flags[_i_FLAG])
         {
