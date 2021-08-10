@@ -129,6 +129,8 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[9] = 'x'; 
     }
 
+    buf[10]='\0';
+
     return buf;
 }
 
