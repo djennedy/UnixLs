@@ -13,6 +13,7 @@
 #include "printDirContent.h"
 #include "getDirContent.h"
 #include "cleanup.h"
+#include "printRecursively.h"
 
 int main(int argc, char *argv[])
 {
