@@ -19,32 +19,21 @@ static char* customStrMode(mode_t mode,char* buf)
 {
 // use the printf from stack overflow
 // concatinate printf to a buf instead
-// put mode into bug?
+// put mode into buf?
 
  
-    char buf[15]; //always 11 but to be safe we use 15
-    strdup(buf, (S_ISDIR(fileStat.st_mode)) ? "d" : "-" ) ); 
-    strcat(buf, (fileStat.st_mode & S_IRUSR) ? "r" : "-"  ); 
-    // strcat(buf, (fileStat.st_mode & S_IWUSR) ? "w" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IXUSR) ? "x" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IRGRP) ? "r" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IWGRP) ? "w" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IXGRP) ? "x" : "-"  ); 
-    // strcat(buf, (fileStat.st_mode & S_IROTH) ? "r" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IWOTH) ? "w" : "-"  );
-    // strcat(buf, (fileStat.st_mode & S_IXOTH) ? "x" : "-"  );
+    buf = &buf[15]; //always 11 but to be safe we use 15
+    strdup(buf); 
+    strcat(buf, (mode & S_IRUSR) ? "r" : "-"  ); 
+    strcat(buf, (mode & S_IWUSR) ? "w" : "-"  );
+    strcat(buf, (mode & S_IXUSR) ? "x" : "-"  );
+    strcat(buf, (mode & S_IRGRP) ? "r" : "-"  );
+    strcat(buf, (mode & S_IWGRP) ? "w" : "-"  );
+    strcat(buf, (mode & S_IXGRP) ? "x" : "-"  ); 
+    strcat(buf, (mode & S_IROTH) ? "r" : "-"  );
+    strcat(buf, (mode & S_IWOTH) ? "w" : "-"  );
+    strcat(buf, (mode & S_IXOTH) ? "x" : "-"  );
 
-
-    // printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-    // printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-"  );
-    // printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-"  );
-    // printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-"  );
-    // printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-"  );
-    // printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-"  );
-    // printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-"  );
-    // printf( (fileStat.st_mode & S_IROTH) ? "r" : "-"  );
-    // printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-"  );
-    // printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-"  );
 
     return buf;
 }
