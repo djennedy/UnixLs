@@ -13,6 +13,7 @@
 #include "printDirContent.h"
 #include "getDirContent.h"
 #include "cleanup.h"
+#include "printRecursively.h"
 
 int main(int argc, char *argv[])
 {
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        printf("ERROR: Unknown option: %c for ls\n", argv[pathIndex][j]);
+                        printf("UnixLs: invalid option: -%c \n", argv[pathIndex][j]);
                         return 0;
                     }
                 }
@@ -94,7 +95,8 @@ int main(int argc, char *argv[])
         DirContent* dirContent = getDirContent(paths[i]);
 
         // If more than 1 paths, print the path before listing
-        if (numPaths>1)
+        // Also print the path before listing if we're printing recusively
+        if (numPaths>1||flags[_R_FLAG])
         {
             if(i!=0)
             {
@@ -105,13 +107,17 @@ int main(int argc, char *argv[])
 
         if(dirContent!=NULL)
         {
-            printDirContent(dirContent, flags);       
-            cleanupDirContent(dirContent);
+            if(flags[_R_FLAG])
+            {
+                printRecursively(dirContent, paths[i],flags);
+            }
+            else
+            {
+                printDirContent(dirContent, flags); 
+            }      
         }
-        else
-        {
-            printf("Error occured\n");
-        }
+        
+        cleanupDirContent(dirContent);
     }
     
     return 0;

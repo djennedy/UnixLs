@@ -21,8 +21,10 @@ DirContent* getDirContent(char* path)
 {
     // To take care of cases where an argument is passed without the directory path
     // Defaults to current directory
-    char dirPath[strlen(path)+3];
-    memset(dirPath, 0, strlen(path)+2);
+
+    int dirPathLen = strlen(path)+3;
+    char dirPath[dirPathLen];
+    memset(dirPath, 0, dirPathLen);
     if(strstr(path,"/")==NULL)
     {
         dirPath[0]='.';
@@ -91,6 +93,9 @@ DirContent* getDirContent(char* path)
                 fileInfo->symLinkName = NULL;
             }
 
+            // We don't have to check for directories here because if it reaches here, then it's a file and not a directory
+            fileInfo->isDir=false;
+
             addToDirContent(dirContent, fileInfo);
 
             return dirContent;
@@ -131,10 +136,13 @@ DirContent* getDirContent(char* path)
         FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
         // Adding a / to the end of the file, since it's a directory
-        // The first +1 is for \0, the second is so we can fit in a / in the end of the path before the file name if the path doesn't contain it
+        // The first +1 is so we can fit in a / in the end of the path before the file name if the path doesn't contain it
         // eg, if I give the argument . , we want ./filename not .filename
-        char buf[strlen(path) + strlen(fileName)+1+1];
-        memset(buf, 0,strlen(path) + strlen(fileName)+2);
+        // The second +1 is for the null terminator
+
+        int bufLen = strlen(path) +1 + strlen(fileName) +1;
+        char buf[bufLen];
+        memset(buf, 0,bufLen);
         strcat(buf, path);
         if(buf[strlen(path)-1]!='/')
         {
@@ -181,6 +189,16 @@ DirContent* getDirContent(char* path)
         else
         {
             fileInfo->symLinkName = NULL;
+        }
+
+        // Check for directory
+        if(S_ISDIR(statbuf.st_mode))
+        {
+            fileInfo->isDir=true;
+        }
+        else
+        {
+            fileInfo->isDir=false;
         }
 
 
