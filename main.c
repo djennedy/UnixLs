@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 
     for (int i=0;i<numPaths;i++)
     {
-        DirContent* dirContent = getDirContent(paths[i]);
+        DirContent* dirContent = getDirContent(paths[i],flags);
 
         // If more than 1 paths, print the path before listing
         // Also print the path before listing if we're printing recusively
