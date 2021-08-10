@@ -18,4 +18,7 @@
 // _R_FLAG = 2
 void printDirContent(DirContent* dirContent, bool flags[]);
 
+// Prints the content of the directory recursively
+void printRecursively(DirContent* dirContent, char* basePath, bool flags[]);
+
 #endif

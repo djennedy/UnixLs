@@ -15,6 +15,8 @@ struct FileInfo_s
     char* name;
     char* symLinkName;
 
+    bool isDir;
+
     // Next fileInfo in the dirContent linked list
     FileInfo* next;
 };
