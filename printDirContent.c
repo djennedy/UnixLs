@@ -77,7 +77,7 @@ void printDirContent(DirContent* dirContent, bool flags[])
 
             if(trav->symLinkName!=NULL)
             {
-                printf("->%s\n",trav->symLinkName);
+                printf(" -> %s\n",trav->symLinkName);
             }
             else
             {
