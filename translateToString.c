@@ -7,7 +7,6 @@
 #include <string.h>
 #include <stdint.h>
 #include <pwd.h>
-// #include <bsd/string.h>
 #include <grp.h>
 #include <time.h> 
 
@@ -17,22 +16,58 @@
 // Buf is always of size 11
 static char* customStrMode(mode_t mode,char* buf)
 {
-// use the printf from stack overflow
-// concatinate printf to a buf instead
-// put mode into buf?
 
- 
-    buf = &buf[15]; //always 11 but to be safe we use 15
-    strdup(buf); 
-    strcat(buf, (mode & S_IRUSR) ? "r" : "-"  ); 
-    strcat(buf, (mode & S_IWUSR) ? "w" : "-"  );
-    strcat(buf, (mode & S_IXUSR) ? "x" : "-"  );
-    strcat(buf, (mode & S_IRGRP) ? "r" : "-"  );
-    strcat(buf, (mode & S_IWGRP) ? "w" : "-"  );
-    strcat(buf, (mode & S_IXGRP) ? "x" : "-"  ); 
-    strcat(buf, (mode & S_IROTH) ? "r" : "-"  );
-    strcat(buf, (mode & S_IWOTH) ? "w" : "-"  );
-    strcat(buf, (mode & S_IXOTH) ? "x" : "-"  );
+    // First, we find the file type
+    if(S_ISDIR(mode))
+    {
+        buf[0]='d';
+    }
+    else if(S_ISCHR(mode))
+    {
+        buf[0]='c';
+    }
+    else if(S_ISBLK(mode))
+    {
+        buf[0]='b';
+    }
+    else if(S_ISLNK(mode))
+    {
+        buf[0]='l';
+    }
+    else if(S_ISFIFO(mode))
+    {
+        buf[0]='p';
+    }
+    else
+    {
+        buf[0]='-';
+    }
+
+    // Setting up permissions for owner
+    if(mode & S_IRUSR == 0)
+    {
+        buf[1] = '-';
+    }
+    else
+    {
+        buf[1] = 'r';
+    }
+    
+    if(mode & S_IWUSR == 0)
+    {
+        buf[2] = '-';
+    }
+    else
+    {
+        buf[2] = 'w';
+    }
+
+    //TODO: put in the rest
+
+    // Setting up permissions for group
+
+    // Setting up permissions for others
+
 
 
     return buf;
@@ -44,7 +79,7 @@ char* getInodeString(ino_t inode)
 
     uintmax_t sizeInode = (uintmax_t)inode;
 
-    // Note: uintmax_t has a maximum of 20 digits, but we're allocating more just to be safe
+    // Note: uintmax_t has a maximum of 20 digits in CSIL, but we're allocating more just to be safe
     char inodeConvert[64]; 
     if ( sprintf(inodeConvert,"%ju",sizeInode) < 0 ){
         inodeConvert[0] = '\0';
@@ -58,7 +93,7 @@ char* getPermissionString(mode_t mode)
     // commented out for testing purposes
 
     char convertedString[11];
-    strmode(mode,convertedString); // converts mode into symbolic string 
+    customStrMode(mode,convertedString); // converts mode into symbolic string 
                             // stored in location referenced by convertetdString
     
     return strdup(convertedString);
