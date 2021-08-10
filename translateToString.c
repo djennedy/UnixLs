@@ -62,7 +62,7 @@ static char* customStrMode(mode_t mode,char* buf)
         buf[2] = 'w';
     }
 
-    if(mode & S_IXUSR == 0)) //execute
+    if(mode & S_IXUSR == 0) //execute
     {
         buf[3] = '-';
     }
