@@ -5,6 +5,6 @@
 #include "dirContent.h"
 
 // Returns NULL on error
-DirContent* getDirContent(char* path);
+DirContent* getDirContent(char* path,bool flags[]);
 
 #endif

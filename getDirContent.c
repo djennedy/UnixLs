@@ -13,15 +13,42 @@
 #include "fileInfo.h"
 #include "dirContent.h"
 #include "cleanup.h"
+#include "optionFlags.h"
 
 typedef struct dirent dirent;
 
+static void fillSymLinkName (FileInfo* fileInfo, char* filePath)
+{
+    char symLinkbuf[257];
+    int symLinkLen = readlink(filePath,symLinkbuf, 256);
+    if(symLinkLen==-1)
+    {
+        printf("UnixLs: Error with symlinks\n");
+        fileInfo->symLinkName = NULL;
+    }
+    else
+    {
+        symLinkbuf[symLinkLen]='\0';
+        fileInfo->symLinkName  = getSymLinkString(symLinkbuf);
+    }
+}
+
+static void fillInfoFromStat (FileInfo* fileInfo, char* filePath,struct stat statbuf)
+{
+    fileInfo->permissions = getPermissionString(statbuf.st_mode);
+    fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
+    fileInfo->owner = getOwnerString(statbuf.st_uid);
+    fileInfo->group = getGroupString(statbuf.st_gid);
+    fileInfo->date = getDateString(statbuf.st_mtim);
+    fileInfo->byteSize = getByteSizeString(statbuf.st_size);
+
+}
+
 // Returns NULL on error
-DirContent* getDirContent(char* path)
+DirContent* getDirContent(char* path,bool flags[])
 {
     // To take care of cases where an argument is passed without the directory path
     // Defaults to current directory
-
     int dirPathLen = strlen(path)+3;
     char dirPath[dirPathLen];
     memset(dirPath, 0, dirPathLen);
@@ -37,22 +64,30 @@ DirContent* getDirContent(char* path)
         strcpy(dirPath, path);
     }
 
+    // First, we open  the directory
     DIR* dirStream = opendir(dirPath);
     char* filePath;
     struct stat statbuf;
 
+    // Create a new dirContent to store the contents of our directory
     DirContent* dirContent = malloc(sizeof(DirContent));
     dirContent->head=NULL;
     dirContent->tail=NULL;
     dirContent->size=0;
     dirent* dirEntry;
 
+    // Error checking dirStream
     if(dirStream==NULL)
     {
         if(errno==ENOTDIR)
         {
             // If it's not a directory, check if it's a valid file name for stat
             filePath = path;
+
+            // Creating a FileInfo object to store our file information
+            FileInfo* fileInfo = malloc(sizeof(FileInfo));
+            fileInfo->name  = getNameString(path);
+            fileInfo->isDir = false; // caught by ENOTDIR, so not directory
 
             if(lstat(filePath, &statbuf)!=0)
             {
@@ -61,40 +96,26 @@ DirContent* getDirContent(char* path)
                 dirContent = NULL;
                 return NULL;
             }
-            FileInfo* fileInfo = malloc(sizeof(FileInfo));
 
-            fileInfo->name = getNameString(path);
-            fileInfo->inode = getInodeString(statbuf.st_ino);
-            fileInfo->permissions = getPermissionString(statbuf.st_mode);
-            fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
-            fileInfo->owner = getOwnerString(statbuf.st_uid);
-            fileInfo->group = getGroupString(statbuf.st_gid);
-            fileInfo->date = getDateString(statbuf.st_mtim); 
-            fileInfo->byteSize = getByteSizeString(statbuf.st_size);
+            if(flags[_i_FLAG])
+            {
+                fileInfo->inode = getInodeString(statbuf.st_ino);
+            }
+            
+            if(flags[_l_FLAG])
+            {
+                fillInfoFromStat(fileInfo, filePath, statbuf);
+            }
 
             // Check for symlinks
             if(S_ISLNK(statbuf.st_mode))
             {
-                char symLinkbuf[257];
-                int symLinkLen = readlink(filePath,symLinkbuf, 256);
-                if(symLinkLen==-1)
-                {
-                    printf("UnixLs: Error with symlinks\n");
-                    fileInfo->symLinkName = NULL;
-                }
-                else
-                {
-                    symLinkbuf[symLinkLen]='\0';
-                    fileInfo->symLinkName  = getSymLinkString(symLinkbuf);
-                }
+                fillSymLinkName(fileInfo, filePath);
             }
             else
             {
                 fileInfo->symLinkName = NULL;
             }
-
-            // We don't have to check for directories here because if it reaches here, then it's a file and not a directory
-            fileInfo->isDir=false;
 
             addToDirContent(dirContent, fileInfo);
 
@@ -117,7 +138,7 @@ DirContent* getDirContent(char* path)
         }
     }
 
-    
+    // Looping through  the directory stream
     while(true)
     {
         dirEntry = readdir(dirStream);
@@ -133,13 +154,10 @@ DirContent* getDirContent(char* path)
             continue;
         }
 
-        FileInfo* fileInfo = malloc(sizeof(FileInfo));
-
         // Adding a / to the end of the file, since it's a directory
         // The first +1 is so we can fit in a / in the end of the path before the file name if the path doesn't contain it
         // eg, if I give the argument . , we want ./filename not .filename
         // The second +1 is for the null terminator
-
         int bufLen = strlen(path) +1 + strlen(fileName) +1;
         char buf[bufLen];
         memset(buf, 0,bufLen);
@@ -151,56 +169,38 @@ DirContent* getDirContent(char* path)
         strcat(buf, fileName);
         filePath = buf;
 
-        if(lstat(filePath, &statbuf)!=0)
-        {
-            printf("UnixLs: Error in stat\n");
-            cleanupDirContent(dirContent);
-            dirContent = NULL;
-            return NULL;
-        }
-
-
-        // TODO: (later) seperate -i from -l
-        fileInfo->inode = getInodeString(statbuf.st_ino);
-        fileInfo->permissions = getPermissionString(statbuf.st_mode);
-        fileInfo->hardLinks = getHardLinksString(statbuf.st_nlink);
-        fileInfo->owner = getOwnerString(statbuf.st_uid);
-        fileInfo->group = getGroupString(statbuf.st_gid);
-        fileInfo->date = getDateString(statbuf.st_mtim);
-        fileInfo->byteSize = getByteSizeString(statbuf.st_size);
+        // Creating a FileInfo object to store our file information
+        FileInfo* fileInfo = malloc(sizeof(FileInfo));
+        memset(fileInfo, 0, sizeof(FileInfo));
         fileInfo->name = getNameString(fileName);
+        fileInfo->isDir=true; // must be true since not caught by ENOTDIR error
+
+        if(flags[_i_FLAG])
+        {
+            fileInfo->inode= getInodeString(dirEntry->d_ino);
+        }
 
         // Check for symlinks
-        if(S_ISLNK(statbuf.st_mode))
+        if(dirEntry->d_type==DT_LNK)
         {
-            char symLinkbuf[257];
-            int symLinkLen = readlink(filePath,symLinkbuf, 256);
-            if(symLinkLen==-1)
-            {
-                printf("UnixLs: Error with symlinks\n");
-                fileInfo->symLinkName = NULL;
-            }
-            else
-            {
-                symLinkbuf[symLinkLen]='\0';
-                fileInfo->symLinkName  = getSymLinkString(symLinkbuf);
-            }
+            fillSymLinkName(fileInfo, filePath);
         }
         else
         {
-            fileInfo->symLinkName = NULL;
+            fileInfo->symLinkName=NULL;
         }
 
-        // Check for directory
-        if(S_ISDIR(statbuf.st_mode))
+        if(flags[_l_FLAG])
         {
-            fileInfo->isDir=true;
+            if(lstat(filePath, &statbuf)!=0)
+            {
+                printf("UnixLs: Error in stat\n");
+                cleanupDirContent(dirContent);
+                dirContent = NULL;
+                return NULL;
+            }
+            fillInfoFromStat(fileInfo, filePath, statbuf);
         }
-        else
-        {
-            fileInfo->isDir=false;
-        }
-
 
         addToDirContent(dirContent, fileInfo);
     }

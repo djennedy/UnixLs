@@ -41,7 +41,7 @@ void printRecursively(DirContent* dirContent, char* basePath, bool flags[])
             }
             strcat(finalPath, trav->name);
 
-            DirContent* recursedDirContent = getDirContent(finalPath);
+            DirContent* recursedDirContent = getDirContent(finalPath,flags);
 
             printf("\n");
             printf("%s:\n",finalPath);
