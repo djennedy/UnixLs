@@ -105,16 +105,15 @@ DirContent* getDirContent(char* path,bool flags[])
             if(flags[_l_FLAG])
             {
                 fillInfoFromStat(fileInfo, filePath, statbuf);
-            }
-
-            // Check for symlinks
-            if(S_ISLNK(statbuf.st_mode))
-            {
-                fillSymLinkName(fileInfo, filePath);
-            }
-            else
-            {
-                fileInfo->symLinkName = NULL;
+                // Check for symlinks
+                if(S_ISLNK(statbuf.st_mode))
+                {
+                    fillSymLinkName(fileInfo, filePath);
+                }
+                else
+                {
+                    fileInfo->symLinkName = NULL;
+                }
             }
 
             addToDirContent(dirContent, fileInfo);
@@ -174,7 +173,20 @@ DirContent* getDirContent(char* path,bool flags[])
         memset(fileInfo, 0, sizeof(FileInfo));
         fileInfo->name = getNameString(fileName);
 
-        if(dirEntry->d_type==DT_DIR)
+        if(flags[_i_FLAG])
+        {
+            fileInfo->inode= getInodeString(dirEntry->d_ino);
+        }
+
+        if(lstat(filePath, &statbuf)!=0)
+        {
+            printf("UnixLs: Error in stat\n");
+            cleanupDirContent(dirContent);
+            dirContent = NULL;
+            return NULL;
+        }
+
+        if(S_ISDIR(statbuf.st_mode))
         {
             fileInfo->isDir=true;
         }
@@ -182,33 +194,20 @@ DirContent* getDirContent(char* path,bool flags[])
         {
             fileInfo->isDir=false;
         }
-        
 
-        if(flags[_i_FLAG])
-        {
-            fileInfo->inode= getInodeString(dirEntry->d_ino);
-        }
-
-        // Check for symlinks
-        if(dirEntry->d_type==DT_LNK)
-        {
-            fillSymLinkName(fileInfo, filePath);
-        }
-        else
-        {
-            fileInfo->symLinkName=NULL;
-        }
 
         if(flags[_l_FLAG])
         {
-            if(lstat(filePath, &statbuf)!=0)
-            {
-                printf("UnixLs: Error in stat\n");
-                cleanupDirContent(dirContent);
-                dirContent = NULL;
-                return NULL;
-            }
             fillInfoFromStat(fileInfo, filePath, statbuf);
+            // Check for symlinks
+            if(S_ISLNK(statbuf.st_mode))
+            {
+                fillSymLinkName(fileInfo, filePath);
+            }
+            else
+            {
+                fileInfo->symLinkName=NULL;
+            }
         }
 
         addToDirContent(dirContent, fileInfo);
