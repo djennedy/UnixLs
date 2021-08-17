@@ -233,7 +233,7 @@ char* getDateString(struct timespec t)
 
     // We only need size 18 here (17 char + 1 null terminator), but we use 20 to be safe
     char stringDate[20];
-    strftime(stringDate, 20, "%b %m %Y %H:%M",curTime);
+    strftime(stringDate, 20, "%b %d %Y %H:%M",curTime);
 
 
     return strdup(stringDate);
